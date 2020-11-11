@@ -1,6 +1,11 @@
 #include "Board.h"
 #include <sstream>
 
+//TODO: rework functions
+//add Doxygen comments
+//reduce the amount of code
+//refactoring
+
 /// Инициализация игрового поля
 /// @param location - верхний левый угол поля
 /// @param size - размер поля, число обязательно должно быть кратно параметру scale_factor описанному в Board.h
