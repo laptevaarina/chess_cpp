@@ -1,52 +1,78 @@
 #include "Board.h"
 #include <sstream>
 
-//TODO: rework functions
-//add Doxygen comments
-//reduce the amount of code
-//refactoring
 
-/// Инициализация игрового поля
-/// @param location - верхний левый угол поля
-/// @param size - размер поля, число обязательно должно быть кратно параметру scale_factor описанному в Board.h
-Board::Board(Graph_lib::Point location, int size) :
-Graph_lib::Rectangle(location, size + size / cells_count, size + size / cells_count) // create a frame for a board whose thickness is half the thickness of the cell
+Cell::Type type_of_cell (int i, int j)
 {
+    if (i % 2 == 0)
+        return (j % 2 == 0) ? Cell::white : Cell::black;
+    else
+        return (j % 2 == 0) ? Cell::black : Cell::white;
+}
+
+Checkerboard::Checkerboard (Point location, int size)
+        : Window{location,size + size/cells_count, size + size/cells_count, "Chess" },
+        size { size }
+{
+    size_range (size + size/cells_count, size + size/cells_count,
+                size + size/cells_count, size + size/cells_count); // fixed window size
     check_argument(size);
+    color(black_cell);
+
+
 
     cell_size = size / cells_count;
-    board_location = Graph_lib::Point {location.x + size / scale_factor, location.y + size / scale_factor};
-
+    board_location = Graph_lib::Point {size / scale_factor, size / scale_factor};
     for (int i = 0; i < cells_count; ++i)
         for (int j = 0; j < cells_count; ++j)
         {
-            cells.push_back(new Graph_lib::Rectangle
-            (Graph_lib::Point(board_location.x + j * cell_size,
-                              board_location.y + i * cell_size), cell_size, cell_size));
-
-            cells[cells.size() - 1].set_fill_color((i + j) % 2 ? black_cell : white_cell);
-            cells[cells.size() - 1].set_color(Graph_lib::Color::black);
+            cells.push_back(new Cell{ Point{board_location.x + j * cell_size,
+                                            board_location.y + i * cell_size}, cell_size,
+                                      cb_clicked, type_of_cell(i,j) });
+            attach (cells[cells.size() - 1]);
         }
-
-    set_color(Graph_lib::Color::black);
-    set_fill_color(white_cell);
-
     create_signatures(location);
+    // create figures here, later
 }
 
-
-void Board::draw_lines() const
+void Checkerboard::clicked (Graph_lib::Address widget)
 {
-    Rectangle::draw_lines();
-    for (int i = 0; i < cells.size(); ++i)
-        cells[i].draw();
+    Fl_Widget& w = Graph_lib::reference_to<Fl_Widget>(widget);
+    Cell& c = at (Point{w.x(), w.y()});
+    if (!c.activated)
+        c.activate();
+    else
+        c.deactivate();
+    c.activated = !c.activated;
+    Fl::redraw();
+}
 
-    for (int i = 0; i < signatures.size(); ++i) {
-        signatures[i].draw_lines();
+Cell& Checkerboard::at (Point p)
+{
+    int i = (p.y - size/scale_factor) / cell_size;
+    int j = (p.x - size/scale_factor) / cell_size;
+    return cells[i * cells_count + j];
+}
+
+Cell& Checkerboard::at (char c, int i)
+{
+    --i;
+    int j = c - 'a';
+    return cells[i * cells_count + j];
+}
+
+void Checkerboard::check_argument(int size)
+{
+    if (size % scale_factor)
+    {
+        std::ostringstream os;
+        os << "Alert! Field size is not a multiple of the scale factor: " << scale_factor
+           << "\nUnexpected board behavior";
+        throw std::invalid_argument(os.str());
     }
 }
 
-void Board::create_signatures(Graph_lib::Point location)
+void Checkerboard::create_signatures(Graph_lib::Point location)
 {
     int font_size = cell_size/scale;
 
@@ -61,6 +87,8 @@ void Board::create_signatures(Graph_lib::Point location)
                                  location.y + font_size - font_size/cells_count}, letter));
         signatures[signatures.size() - 1].set_font_size(font_size);
         signatures[signatures.size() - 1].set_font(Graph_lib::Font::times);
+        signatures[signatures.size() - 1].set_color(white_cell);
+        attach(signatures[signatures.size() - 1]);
     }
 
     for (int i = 0; i < cells_count; ++i)
@@ -69,22 +97,11 @@ void Board::create_signatures(Graph_lib::Point location)
         ost << i + 1;
         std::string num = ost.str();
         signatures.push_back(new Graph_lib::Text(
-                Graph_lib::Point{location.x + scale*font_size/cells_count,
-                                 location.y + cell_size + cell_size/cells_count + i*cell_size }, num));
+                Graph_lib::Point{scale*font_size/cells_count,
+                                 size + cell_size / scale / scale - cell_size/cells_count - i*cell_size }, num));
         signatures[signatures.size() - 1].set_font_size(font_size);
         signatures[signatures.size() - 1].set_font(Graph_lib::Font::times);
-    }
-
-
-}
-
-void Board::check_argument(int size)
-{
-    if (size % scale_factor)
-    {
-        std::ostringstream os;
-        os << "Alert! Field size is not a multiple of the scale factor: " << scale_factor
-           << "\nUnexpected board behavior";
-        throw std::invalid_argument(os.str());
+        signatures[signatures.size() - 1].set_color(white_cell);
+        attach(signatures[signatures.size() - 1]);
     }
 }
