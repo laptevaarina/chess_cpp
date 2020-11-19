@@ -4,6 +4,6 @@ using namespace Graph_lib;
 
 int main()
 {
-    Checkerboard board{ Point{0, 0}, 512 };
+    Checkerboard board{ Point{400, 50}, 640 };
     return gui_main();
 }

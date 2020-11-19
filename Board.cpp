@@ -83,8 +83,8 @@ void Checkerboard::create_signatures(Graph_lib::Point location)
         ost << c;
         std::string letter = ost.str();
         signatures.push_back(new Graph_lib::Text(
-                Graph_lib::Point{location.x + cell_size - cell_size/cells_count + j*cell_size,
-                                 location.y + font_size - font_size/cells_count}, letter));
+                Graph_lib::Point{cell_size - cell_size/cells_count + j*cell_size,
+                                 font_size - font_size/cells_count}, letter));
         signatures[signatures.size() - 1].set_font_size(font_size);
         signatures[signatures.size() - 1].set_font(Graph_lib::Font::times);
         signatures[signatures.size() - 1].set_color(white_cell);
