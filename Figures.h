@@ -7,6 +7,7 @@
 
 #include <Graph.h>
 #include "Board.h"
+#include "Cell.h"
 
 enum class Figure_Type { black = 0, white };
 
@@ -18,49 +19,49 @@ class Figures
 public:
   Figures (Graph_lib::Point p, const Figure_Type &color, const Graph_lib::Image &body);
 
-  virtual vector<Cell> avialable_turns(Board b, const Cell &pos) =0;
+  virtual std::vector<Cell> avialable_turns(Checkerboard b, const Cell &pos) =0;
 };
 
 struct King : Figures
 {
   King (Graph_lib::Point p, const Figure_Type &color, const Graph_lib::Image &body)
       : Figures (p, color, body) {};
-  vector<Cell> avialable_turns(Board b, const Cell &pos) const override;
+  std::vector<Cell> avialable_turns(Checkerboard b, const Cell &pos) override;
 };
 
 struct Queen : Figures
 {
   Queen (Graph_lib::Point p, const Figure_Type &color, const Graph_lib::Image &body)
   : Figures (p, color, body) {};
-  vector<Cell> avialable_turns(Board b, const Cell &pos) const override;
+  std::vector<Cell> avialable_turns(Checkerboard b, const Cell &pos) override;
 };
 
 struct Pawn : Figures
 {
   Pawn (Graph_lib::Point p, const Figure_Type &color, const Graph_lib::Image &body)
   : Figures (p, color, body) {};
-  vector<Cell> avialable_turns(Board b, const Cell &pos) const override;
+  std::vector<Cell> avialable_turns(Checkerboard b, const Cell &pos) override;
 };
 
 struct Rook : Figures
 {
   Rook (Graph_lib::Point p, const Figure_Type &color, const Graph_lib::Image &body)
   : Figures (p, color, body) {};
-  vector<Cell> avialable_turns(Board b, const Cell &pos) const override;
+  std::vector<Cell> avialable_turns(Checkerboard b, const Cell &pos) override;
 };
 
 struct Horse : Figures
 {
   Horse (Graph_lib::Point p, const Figure_Type &color, const Graph_lib::Image &body)
   : Figures (p, color, body) {};
-  vector<Cell> avialable_turns(Board b, const Cell &pos) const override;
+  std::vector<Cell> avialable_turns(Checkerboard b, const Cell &pos) override;
 };
 
 struct Elephant : Figures
 {
   Elephant (Graph_lib::Point p, const Figure_Type &color, const Graph_lib::Image &body)
   : Figures (p, color, body) {};
-  vector<Cell> avialable_turns(Board b, const Cell &pos) const override;
+  std::vector<Cell> avialable_turns(Checkerboard b, const Cell &pos) override;
 };
 
 #endif // CHESS_FIGURES_H
