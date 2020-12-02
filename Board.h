@@ -8,8 +8,8 @@
 struct Checkerboard : Graph_lib::Window
 {
     Checkerboard (Point location, int size);
+    Cell& at2 (Position pos);
     Cell& at (Point p);
-    Cell& at (char c, int i);
     static constexpr int cells_count { 8 };
     static constexpr int scale { 2 };
     static constexpr int scale_factor = cells_count * 2;

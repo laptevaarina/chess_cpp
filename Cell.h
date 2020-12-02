@@ -2,6 +2,7 @@
 #define CHESS_FIELD_H
 #include "Graph.h"
 #include "GUI.h"
+#include "Figures.h"
 
 using Graph_lib::Point;
 const unsigned int black_cell { 64 };
@@ -10,6 +11,7 @@ const unsigned int white_cell { 174 };
 
 struct Cell : Graph_lib::Button
 {
+    Graph_lib::Shape* fig;
     enum Type { black, white };
     bool activated = false;
     Cell (Point xy, int size, Graph_lib::Callback cb, Type t);
@@ -18,6 +20,8 @@ struct Cell : Graph_lib::Button
     void deactivate () { reset_color(); }
     [[nodiscard]] bool is_black () const { return type == black; }
     [[nodiscard]] Point center () const { return Point{ loc.x + width/2, loc.y + height/2 }; }
+    ~Cell()
+        { delete fig; }
 private:
     Type type;
     int size;

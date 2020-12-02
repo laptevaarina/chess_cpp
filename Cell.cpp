@@ -9,6 +9,7 @@ void Cell::attach (Graph_lib::Window& win)
     Button::attach (win);
     reset_color();
 }
+
 void Cell::reset_color ()
 {
     if (!pw) Graph_lib::error ("Cell is not attached to a window");

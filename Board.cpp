@@ -54,11 +54,11 @@ Cell& Checkerboard::at (Point p)
     return cells[i * cells_count + j];
 }
 
-Cell& Checkerboard::at (char c, int i)
+Cell& Checkerboard::at2 (Position pos)
 {
-    --i;
-    int j = c - 'a';
-    return cells[i * cells_count + j];
+    --pos.i;
+    int j = pos.c - 'a';
+    return cells[pos.i * cells_count + j];
 }
 
 void Checkerboard::check_argument(int size)

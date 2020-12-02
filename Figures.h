@@ -1,67 +1,69 @@
 //TODO: write class Figures
-//в конструктор Cell нужно указать есть ли фигура и какая, cells в Checkerboard - public,
-// тогда можно проверять необходимые нам клетки на наличие там фигуры
 
 #ifndef CHESS_FIGURES_H
 #define CHESS_FIGURES_H
 
 #include <Graph.h>
-#include "Board.h"
-#include "Cell.h"
 
-enum class Figure_Type { black = 0, white };
+enum class Figure_Color { black = 0, white };
 
-class Figures
+struct Position
 {
-  const Graph_lib::Image body;
-  const Figure_Type color;
-
-public:
-  Figures (Graph_lib::Point p, const Figure_Type &color, const Graph_lib::Image &body);
-
-  virtual std::vector<Cell> avialable_turns(Checkerboard b, const Cell &pos) =0;
+  char c;
+  int i;
 };
 
-struct King : Figures
+class Figures : public Graph_lib::Shape
 {
-  King (Graph_lib::Point p, const Figure_Type &color, const Graph_lib::Image &body)
-      : Figures (p, color, body) {};
-  std::vector<Cell> avialable_turns(Checkerboard b, const Cell &pos) override;
+protected:
+  Position pos;
+  Figure_Color color;
+  Fl_PNG_Image* body;
+
+public:
+  Figures () {};
+
+  virtual std::vector<Position> available_turns() { return std::vector<Position> {}; };
+  void move(int dc, int di) override;
+  void draw_lines() const override;
+
+  virtual ~Figures() { delete body; };
+};
+
+struct King : public Figures
+{
+  King (Position pos, const Figure_Color &color);
+  std::vector<Position> available_turns() override;
 };
 
 struct Queen : Figures
 {
-  Queen (Graph_lib::Point p, const Figure_Type &color, const Graph_lib::Image &body)
-  : Figures (p, color, body) {};
-  std::vector<Cell> avialable_turns(Checkerboard b, const Cell &pos) override;
+  Queen (Position pos, const Figure_Color &color);
+  std::vector<Position> available_turns() override;
 };
 
 struct Pawn : Figures
 {
-  Pawn (Graph_lib::Point p, const Figure_Type &color, const Graph_lib::Image &body)
-  : Figures (p, color, body) {};
-  std::vector<Cell> avialable_turns(Checkerboard b, const Cell &pos) override;
+  Pawn (Position pos, const Figure_Color &color);
+  std::vector<Position> available_turns() override;
 };
 
 struct Rook : Figures
 {
-  Rook (Graph_lib::Point p, const Figure_Type &color, const Graph_lib::Image &body)
-  : Figures (p, color, body) {};
-  std::vector<Cell> avialable_turns(Checkerboard b, const Cell &pos) override;
+  Rook (Position pos, const Figure_Color &color);
+  std::vector<Position> available_turns() override;
 };
 
 struct Horse : Figures
 {
-  Horse (Graph_lib::Point p, const Figure_Type &color, const Graph_lib::Image &body)
-  : Figures (p, color, body) {};
-  std::vector<Cell> avialable_turns(Checkerboard b, const Cell &pos) override;
+  Horse (Position pos, const Figure_Color &color);
+  std::vector<Position> available_turns() override;
 };
 
 struct Elephant : Figures
 {
-  Elephant (Graph_lib::Point p, const Figure_Type &color, const Graph_lib::Image &body)
-  : Figures (p, color, body) {};
-  std::vector<Cell> avialable_turns(Checkerboard b, const Cell &pos) override;
+  Elephant (Position pos, const Figure_Color &color);
+  std::vector<Position> available_turns() override;
 };
 
 #endif // CHESS_FIGURES_H
