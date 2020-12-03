@@ -1,16 +1,23 @@
 #include "Figures.h"
+
+
 //тут везде с магическими константами 80 - cell size
+
+Graph_lib::Point get_position(Position pos)
+{
+    int x = (pos.c - 'a') * cell_size  + side_size;
+    int y = (cells_count - pos.i) * cell_size + side_size;
+
+    return Graph_lib::Point {x, y};
+}
 
 void Figures::draw_lines() const
 {
   Figures::body->draw (point(0).x, point(0).y, 80, 80, 0, 0);
 }
 
-void Figures::move(int dc, int di)
+void Figures::move(int dx, int dy)
 {
-  int dx = int((pos.c - dc)*80);
-  int dy = (pos.i - di)*80;
-
   //delete figure and create new on new position
 
   Shape::move(dx, dy);
@@ -19,9 +26,8 @@ void Figures::move(int dc, int di)
 
 King::King(Position pos, const Figure_Color &color)
 {
-  int x = int((pos.c-'a')*80)+40; //40 нужно чтобы фигуры стояли посередине клетки а не на пересечении
-  int y = (pos.i-1)*80+40;
-  add(Graph_lib::Point {x, y});
+  add(get_position(pos));
+
   Figures::pos = pos;
   Figures::color = color;
   std::string w_k = "white_king.png";
@@ -51,9 +57,7 @@ std::vector<Position> King::available_turns()
 
 Queen::Queen(Position pos, const Figure_Color &color)
 {
-  int x = int((pos.c-'a')*80)+40;
-  int y = (pos.i-1)*80+40;
-  add(Graph_lib::Point {x, y});
+  add(get_position(pos));
 
   Figures::pos = pos;
   Figures::color = color;
@@ -94,9 +98,7 @@ std::vector<Position> Queen::available_turns()
 
 Pawn::Pawn(Position pos, const Figure_Color &color)
 {
-  int x = int((pos.c-'a')*80)+40;
-  int y = (pos.i+1)*80+40;
-  add(Graph_lib::Point {x, y});
+  add(get_position(pos));
 
   Figures::pos = pos;
   Figures::color = color;
@@ -123,16 +125,14 @@ std::vector<Position> Pawn::available_turns()
 
 Rook::Rook(Position pos, const Figure_Color &color)
 {
-  int x = int((pos.c-'a')*80)+40;
-  int y = (pos.i-1)*80+40;
-  add(Graph_lib::Point {x, y});
+    add(get_position(pos));
 
-  Figures::pos = pos;
-  Figures::color = color;
-  if (color == Figure_Color::white)
-    body = new Fl_PNG_Image("white_rook.png");
-  else
-    body = new Fl_PNG_Image("black_rook.png");
+    Figures::pos = pos;
+    Figures::color = color;
+    if (color == Figure_Color::white)
+        body = new Fl_PNG_Image("white_rook.png");
+    else
+        body = new Fl_PNG_Image("black_rook.png");
 }
 
 std::vector<Position> Rook::available_turns()
@@ -153,16 +153,14 @@ std::vector<Position> Rook::available_turns()
 
 Horse::Horse(Position pos, const Figure_Color &color)
 {
-  int x = int((pos.c-'a')*80)+40;
-  int y = (pos.i-1)*80+40;
-  add(Graph_lib::Point {x, y});
+    add(get_position(pos));
 
-  Figures::pos = pos;
-  Figures::color = color;
-  if (color == Figure_Color::white)
-    body = new Fl_PNG_Image("white_horse.png");
-  else
-    body = new Fl_PNG_Image("black_horse.png");
+    Figures::pos = pos;
+    Figures::color = color;
+    if (color == Figure_Color::white)
+        body = new Fl_PNG_Image("white_horse.png");
+    else
+        body = new Fl_PNG_Image("black_horse.png");
 }
 
 std::vector<Position> Horse::available_turns()
@@ -188,16 +186,14 @@ std::vector<Position> Horse::available_turns()
 
 Elephant::Elephant(Position pos, const Figure_Color &color)
 {
-  int x = int((pos.c-'a')*80)+40;
-  int y = (pos.i-1)*80+40;
-  add(Graph_lib::Point {x, y});
+    add(get_position(pos));
 
-  Figures::pos = pos;
-  Figures::color = color;
-  if (color == Figure_Color::white)
-    body = new Fl_PNG_Image("white_elephant.png");
-  else
-    body = new Fl_PNG_Image("black_elephant.png");
+    Figures::pos = pos;
+    Figures::color = color;
+    if (color == Figure_Color::white)
+        body = new Fl_PNG_Image("white_elephant.png");
+    else
+        body = new Fl_PNG_Image("black_elephant.png");
 }
 
 std::vector<Position> Elephant::available_turns()

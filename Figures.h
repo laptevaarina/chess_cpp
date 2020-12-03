@@ -4,8 +4,11 @@
 #define CHESS_FIGURES_H
 
 #include <Graph.h>
+#include "constant_table.h"
 
-enum class Figure_Color { black = 0, white };
+using figure_t = Graph_lib::Shape*;
+enum class Figure_Color { black, white };
+enum Figure_Type {pawn, horse, king, elephant, queen, rook};
 
 struct Position
 {
