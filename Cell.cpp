@@ -1,8 +1,8 @@
 #include "Cell.h"
 
-Cell::Cell (Point xy, int size, Graph_lib::Callback cb, Type t) :
+Cell::Cell (Point xy, int size, Graph_lib::Callback cb, Type t, Position pos) :
         Button{ xy, size, size, "", cb },
-        type{ t } {}
+        type{ t }, pos{ pos } {}
 
 void Cell::attach (Graph_lib::Window& win)
 {
