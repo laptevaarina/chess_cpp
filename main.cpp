@@ -4,7 +4,6 @@ using namespace Graph_lib;
 
 int main()
 {
-    Checkerboard board{board_size };
-    board.init_game();
+    Checkerboard board{ board_size };
     return gui_main();
 }
