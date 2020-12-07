@@ -11,6 +11,10 @@ class Rules
     Figure_Color current_turn = Figure_Color::white;
     static void exclude_out_of_board(std::vector<Position>& turns);
     void exclude_friendly_fire(Checkerboard& board, std::vector<Position>& turns);
+    static void add_pawn_fire(Checkerboard& board, std::vector<Position>& turns, Position pos);
+    static int pawn_direction(Checkerboard &board, Position pos);
+    void exclude_shah(Checkerboard &board, std::vector<Position> &turns, Position k);
+    void add_castling(Checkerboard &board, std::vector<Position> &turns, Position pos);
     static void diagonal_moving(Checkerboard& board, std::vector<Position>& turns, Position pos);
     static void vertical_moving(Checkerboard& board, std::vector<Position>& turns, Position pos);
     std::vector<Position> get_horse_turns(Checkerboard& board, Position pos);

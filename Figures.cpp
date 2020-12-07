@@ -34,6 +34,7 @@ King::King(Position pos, const Figure_Color &color)
 
   Figures::pos = pos;
   Figures::color = color;
+  Figures::type = Figure_Type::king;
   std::string w_k = "white_king.png";
   if (color == Figure_Color::white)
     body = new Fl_PNG_Image(w_k.c_str());
@@ -68,6 +69,7 @@ Queen::Queen(Position pos, const Figure_Color &color)
 
   Figures::pos = pos;
   Figures::color = color;
+  Figures::type = Figure_Type::queen;
   if (color == Figure_Color::white)
     body = new Fl_PNG_Image("white_queen.png");
   else
@@ -109,6 +111,7 @@ Pawn::Pawn(Position pos, const Figure_Color &color)
 
   Figures::pos = pos;
   Figures::color = color;
+  Figures::type = Figure_Type::pawn;
   if (color == Figure_Color::white)
     body = new Fl_PNG_Image("white_pawn.png");
   else

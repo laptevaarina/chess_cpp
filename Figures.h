@@ -32,6 +32,9 @@ public:
     Figure_Color get_color() { return color; }
     Figure_Type get_type() { return type; }
 
+    bool first_turn = true;
+    Graph_lib::Point last_turn;
+
     virtual ~Figures() { delete body; };
 };
 
