@@ -33,15 +33,40 @@ Checkerboard::Checkerboard (int size)
     create_signatures();
         //TODO: добавлять и удалять фигуры для теста здесь
     set_figure(Position{'e', 4}, Figure_Color::black, Figure_Type::horse);
-    set_figure(Position{'a', 1}, Figure_Color::white, Figure_Type::rook);
+    set_figure(Position{'a', 1}, Figure_Color::black, Figure_Type::rook);
     set_figure(Position{'b', 7}, Figure_Color::white, Figure_Type::elephant);
-    set_figure(Position{'h', 1}, Figure_Color::white, Figure_Type::rook);
-    //set_figure(Position{'d', 4}, Figure_Color::black, Figure_Type::queen);
+    set_figure(Position{'h', 1}, Figure_Color::black, Figure_Type::rook);
+    set_figure(Position{'f', 4}, Figure_Color::black, Figure_Type::queen);
     set_figure(Position{'e', 1}, Figure_Color::white, Figure_Type::king);
     set_figure(Position{'c', 3}, Figure_Color::white, Figure_Type::pawn);
-    set_figure(Position{'b', 5}, Figure_Color::black, Figure_Type::pawn);
+    set_figure(Position{'d', 3}, Figure_Color::black, Figure_Type::pawn);
 }
 
+//TODO:чтобы проверить можешь сходить белой пешкой, потом чёрным ферзём на одну клетку вправо
+
+void print_result(Rules& rules, Graph_lib::Point board_location)
+{
+  std::string text;
+  if (rules.get_loser() == Figure_Color::white)
+    text = "Winner is black figures!";
+  else
+    text = "Winner is white figures!";
+
+  Simple_window result_win{Graph_lib::Point{board_location.x+board_size/3, board_location.y+board_size/2}
+      , board_size*3/4, board_size/6, "Score"};
+
+  Graph_lib::Rectangle background {Graph_lib::Point{0, 0}, board_size, board_size/4};
+  background.set_fill_color(black_cell);
+  result_win.attach(background);
+
+  Graph_lib::Text result {Graph_lib::Point {board_size/16, board_size/12}, text};
+  result.set_font(Graph_lib::Font::times);
+  result.set_font_size(font_size);
+  result.set_color(white_cell);
+  result_win.attach(result);
+
+  result_win.wait_for_button();
+}
 
 void Checkerboard::clicked (Graph_lib::Address widget)
 {
@@ -50,6 +75,9 @@ void Checkerboard::clicked (Graph_lib::Address widget)
     Cell& tmp = at (current);
     if (!moving && tmp.fig != nullptr && tmp.fig->get_color() == rules.get_turn_color())
     {
+        if (rules.check_end_game(*this))
+          print_result(rules, board_location);
+
         available_turns = rules.get_available_turns(*this, tmp.position());
 
         for (auto pos : available_turns)
@@ -83,6 +111,8 @@ void Checkerboard::clicked (Graph_lib::Address widget)
         available_turns.clear();
         moving = false;
     }
+
+
     Fl::redraw();
 }
 
@@ -539,9 +569,23 @@ std::vector<Position> Rules::get_horse_turns(Checkerboard &board, Position pos)
     return turns;
 }
 
-bool Rules::check_end_game()
+bool Rules::check_end_game(Checkerboard& board)
 {
     //TODO: лучше не трогай это надо вместе посмотреть что да как ибо придется лезть в обработчик событий
-    return false;
+  for (int i = 0; i < 8; ++i)
+    for (int j = 1; j <= 8; ++j)
+    {
+      Position pos = {char('a' + i), j};
+      if (board.at(pos).fig != nullptr && board.at(pos).fig->get_type() == Figure_Type::king
+          && board.at(pos).fig->get_color() == current_turn)
+      {
+        if (get_available_turns(board, pos).empty())
+        {
+          loser = current_turn;
+          return true;
+        }
+      }
+    }
+  return false;
 }
 

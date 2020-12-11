@@ -9,6 +9,7 @@ struct Checkerboard;
 class Rules
 {
     Figure_Color current_turn = Figure_Color::white;
+    Figure_Color loser;
     static void exclude_out_of_board(std::vector<Position>& turns);
     void exclude_friendly_fire(Checkerboard& board, std::vector<Position>& turns);
     static void add_pawn_fire(Checkerboard& board, std::vector<Position>& turns, Position pos);
@@ -23,13 +24,14 @@ class Rules
     std::vector<Position> get_elephant_turns(Checkerboard& board, Position pos);
     std::vector<Position> get_queen_turns(Checkerboard& board, Position pos);
     std::vector<Position> get_king_turns(Checkerboard& board, Position pos);
-    bool check_end_game();
+
 public:
     std::vector<Position> get_available_turns(Checkerboard& board, Position pos);
     void end_turn() { if (current_turn == Figure_Color::white) current_turn = Figure_Color::black;
                       else current_turn = Figure_Color::white; };
     Figure_Color get_turn_color() { return current_turn; };
-
+    Figure_Color get_loser() { return loser; };
+    bool check_end_game(Checkerboard& board);
 
 };
 
