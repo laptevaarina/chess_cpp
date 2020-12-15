@@ -31,18 +31,17 @@ Checkerboard::Checkerboard (int size)
             attach (cells[cells.size() - 1]);
         }
     create_signatures();
+    init_game();
         //TODO: добавлять и удалять фигуры для теста здесь
-    set_figure(Position{'e', 4}, Figure_Color::black, Figure_Type::horse);
-    set_figure(Position{'a', 1}, Figure_Color::black, Figure_Type::rook);
-    set_figure(Position{'b', 7}, Figure_Color::white, Figure_Type::elephant);
-    set_figure(Position{'h', 1}, Figure_Color::black, Figure_Type::rook);
-    set_figure(Position{'f', 4}, Figure_Color::black, Figure_Type::queen);
-    set_figure(Position{'e', 1}, Figure_Color::white, Figure_Type::king);
-    set_figure(Position{'c', 3}, Figure_Color::white, Figure_Type::pawn);
-    set_figure(Position{'d', 3}, Figure_Color::black, Figure_Type::pawn);
+//    set_figure(Position{'e', 4}, Figure_Color::black, Figure_Type::horse);
+//    set_figure(Position{'a', 1}, Figure_Color::black, Figure_Type::rook);
+//    set_figure(Position{'b', 7}, Figure_Color::white, Figure_Type::elephant);
+//    set_figure(Position{'h', 1}, Figure_Color::black, Figure_Type::rook);
+//    set_figure(Position{'f', 4}, Figure_Color::black, Figure_Type::queen);
+//    set_figure(Position{'e', 1}, Figure_Color::white, Figure_Type::king);
+//    set_figure(Position{'c', 3}, Figure_Color::white, Figure_Type::pawn);
+//    set_figure(Position{'d', 3}, Figure_Color::black, Figure_Type::pawn);
 }
-
-//TODO:чтобы проверить можешь сходить белой пешкой, потом чёрным ферзём на одну клетку вправо
 
 void print_result(Rules& rules, Graph_lib::Point board_location)
 {
@@ -68,16 +67,72 @@ void print_result(Rules& rules, Graph_lib::Point board_location)
   result_win.wait_for_button();
 }
 
+bool turn_is_in(std::vector<Position> &turns, Position pos)
+{
+  for (auto i : turns)
+    if ((i.letter == pos.letter) && (i.number == pos.number))
+      return true;
+  return false;
+}
+
+Position Rules::get_king(Checkerboard& board)
+{
+  Position king {'a', 1};
+  for (int i = 0; i < 8; ++i)
+    for (int j = 1; j <= 8; ++j)
+    {
+      Position pos = {char('a' + i), j};
+      if (board.at(pos).fig != nullptr && board.at(pos).fig->get_type() == Figure_Type::king
+          && board.at(pos).fig->get_color() == current_turn)
+        king = {pos};
+    }
+  return king;
+}
+
+bool Rules::is_shah(Checkerboard& board)
+{
+  Position king = get_king(board);
+
+  for (int i = 0; i < 8; ++i)
+    for (int j = 1; j <= 8; ++j)
+    {
+      Position pos = {char('a' + i), j};
+      if (board.at(pos).fig != nullptr && board.at(pos).fig->get_type() != Figure_Type::king
+          && board.at(pos).fig->get_color() != current_turn)
+      {
+        current_turn = board.at(pos).fig->get_color();
+        std::vector<Position> turns_figures = get_available_turns(board, pos);
+        current_turn = board.at(king).fig->get_color();
+        if(turn_is_in(turns_figures, king))
+          return true;
+      }
+    }
+
+  return false;
+}
+
 void Checkerboard::clicked (Graph_lib::Address widget)
 {
+    if (rules.check_end_game(*this))
+      print_result(rules, board_location);
+
     auto& w = Graph_lib::reference_to<Fl_Widget>(widget);
     Point current {w.x(), w.y()};
     Cell& tmp = at (current);
-    if (!moving && tmp.fig != nullptr && tmp.fig->get_color() == rules.get_turn_color())
-    {
-        if (rules.check_end_game(*this))
-          print_result(rules, board_location);
 
+    if (!moving && rules.is_shah(*this))
+    {
+      Position king = rules.get_king(*this);
+      available_turns = rules.get_available_turns(*this, king);
+      for (auto pos : available_turns)
+        at(pos).activate();
+      at(king).activate();
+      current = at(king).location();
+      from = current;
+      moving = true;
+    }
+    else if (!moving && tmp.fig != nullptr && tmp.fig->get_color() == rules.get_turn_color())
+      {
         available_turns = rules.get_available_turns(*this, tmp.position());
 
         for (auto pos : available_turns)
@@ -394,16 +449,6 @@ std::vector<Position> Rules::get_queen_turns(Checkerboard &board, Position pos)
     return turns;
 }
 
-
-bool turn_is_in(std::vector<Position> &turns, Position pos)
-{
-  for (auto i : turns)
-    if ((i.letter == pos.letter) && (i.number == pos.number))
-      return true;
-  return false;
-}
-
-//TODO: refactor
 void Rules::exclude_shah(Checkerboard &board, std::vector<Position> &turns, Position k)
 {
   std::vector<Position> turn_shah;
@@ -413,13 +458,26 @@ void Rules::exclude_shah(Checkerboard &board, std::vector<Position> &turns, Posi
     for (int j = 1; j <= 8; ++j)
     {
       Position pos = {char('a' + i), j};
-      if (board.at(pos).fig != nullptr && board.at(pos).fig->get_type() != Figure_Type::king
-          && board.at(pos).fig->get_color() != board.at(k).fig->get_color())
+      figure_t cur_fig = board.at(pos).fig;
+
+      if (cur_fig != nullptr && cur_fig->get_type() != Figure_Type::king &&
+          cur_fig->get_color() != board.at(k).fig->get_color())
       {
         std::vector<Position> turns_figures = get_available_turns(board, pos);
         for (auto n : turns)
-          if(turn_is_in(turns_figures, n))
+          if (turn_is_in(turns_figures, n))
             turn_shah.push_back(n);
+
+        if (cur_fig->get_type() == Figure_Type::pawn)
+        {
+          int direction = pawn_direction(board, pos);
+          for (int u = -1; u <= 1; u += 2)
+          {
+            Position pos_of_turn{char(pos.letter + u), pos.number + direction};
+            if (turn_is_in(turns, pos_of_turn))
+              turn_shah.push_back(pos_of_turn);
+          }
+        }
       }
     }
 
@@ -471,6 +529,24 @@ void Rules::add_castling(Checkerboard &board, std::vector<Position> &turns, Posi
 
 }
 */
+
+bool Rules::around_own(Checkerboard &board, Position pos)
+{
+  std::vector<Position> positions;
+  for (int i = -1; i <= 1; ++i)
+    for (int j = -1; j <= 1; ++j)
+    {
+      Position cur {char(pos.letter + i), pos.number + j};
+      positions.push_back(cur);
+    }
+  exclude_out_of_board(positions);
+
+  for (auto i : positions)
+    if (board.at(i).fig->get_color() != board.at(pos).fig->get_color())
+      return false;
+
+  return true;
+}
 
 std::vector<Position> Rules::get_king_turns(Checkerboard &board, Position pos)
 {
@@ -579,7 +655,8 @@ bool Rules::check_end_game(Checkerboard& board)
       if (board.at(pos).fig != nullptr && board.at(pos).fig->get_type() == Figure_Type::king
           && board.at(pos).fig->get_color() == current_turn)
       {
-        if (get_available_turns(board, pos).empty())
+        std::vector<Position> turns = get_available_turns(board, pos);
+        if (turns.empty() && !around_own(board, pos))
         {
           loser = current_turn;
           return true;

@@ -1,10 +1,16 @@
-//TODO: write class Figures
-
 #ifndef CHESS_FIGURES_H
 #define CHESS_FIGURES_H
 
 #include <Graph.h>
 #include "constant_table.h"
+
+/*!
+ \brief class Figures
+
+ class Figures является родительским для всех видов фигур.
+ Дочерние классы Pawn, Horse, King, Elephant, Queen, Rook
+ наследуются от класса Figures.
+ */
 
 class Figures;
 using figure_t = Figures*;

@@ -4,8 +4,14 @@
 #include "GUI.h"
 #include "Figures.h"
 
-using Graph_lib::Point;
+/*!
+ \brief struct Cell
 
+ Структура, отвечающая за действия и описание
+ каждой клетки на поле Checkerboard
+ */
+
+using Graph_lib::Point;
 
 struct Cell : Graph_lib::Button
 {

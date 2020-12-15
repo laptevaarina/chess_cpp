@@ -4,6 +4,14 @@
 #include "Cell.h"
 #include "Simple_window.h"
 
+/*!
+ \brief class Rules и struct Checkerboard
+
+ class Rules: класс, отвечающий за правила передвижения фигур,
+ их взаимодействия и окончание игры
+ struct Checkerboard: структура, отвечающая за игровую доску
+ */
+
 struct Checkerboard;
 
 class Rules
@@ -15,6 +23,7 @@ class Rules
     static void add_pawn_fire(Checkerboard& board, std::vector<Position>& turns, Position pos);
     static int pawn_direction(Checkerboard &board, Position pos);
     void exclude_shah(Checkerboard &board, std::vector<Position> &turns, Position k);
+    bool around_own(Checkerboard &board, Position pos);
     void add_castling(Checkerboard &board, std::vector<Position> &turns, Position pos);
     static void diagonal_moving(Checkerboard& board, std::vector<Position>& turns, Position pos);
     static void vertical_moving(Checkerboard& board, std::vector<Position>& turns, Position pos);
@@ -31,6 +40,8 @@ public:
                       else current_turn = Figure_Color::white; };
     Figure_Color get_turn_color() { return current_turn; };
     Figure_Color get_loser() { return loser; };
+    Position get_king(Checkerboard& board);
+    bool is_shah(Checkerboard& board);
     bool check_end_game(Checkerboard& board);
 
 };
