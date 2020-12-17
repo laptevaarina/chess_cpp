@@ -41,7 +41,7 @@ public:
     Figure_Color get_turn_color() { return current_turn; };
     Figure_Color get_loser() { return loser; };
     Position get_king(Checkerboard& board);
-    bool is_shah(Checkerboard& board);
+    bool is_shah(Checkerboard& board, Position pos);
     bool check_end_game(Checkerboard& board);
 
 };
@@ -74,7 +74,9 @@ private:
     Graph_lib::Vector_ref<Cell> cells;
     Graph_lib::Vector_ref<Graph_lib::Text> signatures;
     Graph_lib::Point board_location;
+    friend Rules;
     Rules rules;
+
 };
 
 

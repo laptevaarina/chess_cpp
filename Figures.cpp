@@ -5,6 +5,7 @@
 //TODO: как только возьмешь заготовки кода отсюда для написания ходов удали
 //TODO: пожалуйста не дублируй код по 1000 раз ознакомься с интерфейсом класса Rules
 
+
 Graph_lib::Point get_position(Position pos)
 {
     int x = (pos.letter - 'a') * cell_size + side_size;

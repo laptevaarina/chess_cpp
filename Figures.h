@@ -74,5 +74,6 @@ struct Elephant : Figures
   Elephant (Position pos, const Figure_Color &color);
 };
 
+
 #endif // CHESS_FIGURES_H
 
