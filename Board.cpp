@@ -1,6 +1,6 @@
 #include "Board.h"
 #include <sstream>
-
+#include <iostream>
 
 Cell::Type type_of_cell (int i, int j)
 {
@@ -30,10 +30,10 @@ Checkerboard::Checkerboard (int size)
             attach (cells[cells.size() - 1]);
         }
     create_signatures();
-    //init_game();
+    init_game();
         //TODO: добавлять и удалять фигуры для теста здесь
 
-
+/*
     set_figure(Position{'e', 4}, Figure_Color::black, Figure_Type::horse);
     set_figure(Position{'a', 1}, Figure_Color::black, Figure_Type::rook);
     set_figure(Position{'b', 7}, Figure_Color::white, Figure_Type::elephant);
@@ -41,7 +41,7 @@ Checkerboard::Checkerboard (int size)
     set_figure(Position{'f', 4}, Figure_Color::black, Figure_Type::queen);
     set_figure(Position{'e', 1}, Figure_Color::white, Figure_Type::king);
     set_figure(Position{'c', 3}, Figure_Color::white, Figure_Type::pawn);
-    set_figure(Position{'d', 3}, Figure_Color::black, Figure_Type::pawn);
+    set_figure(Position{'d', 3}, Figure_Color::black, Figure_Type::pawn);*/
 
 }
 
@@ -155,6 +155,7 @@ void Checkerboard::clicked (Graph_lib::Address widget)
         figure_t figure = delete_figure(from);
         if (figure != nullptr)
         {
+            figure->first_turn = false;
             figure->move(tmp.loc.x - tmp_from.loc.x, tmp.loc.y - tmp_from.loc.y);
             set_figure(current, figure);
         }
@@ -573,7 +574,6 @@ std::vector<Position> Rules::get_pawn_turns(Checkerboard &board, Position pos)
       if (check_obstacle(board, turns, pos, pos_of_turn))
         turns.pop_back();
 
-      board.at(pos).fig->first_turn = false;
     }
 
     add_pawn_fire(board, turns, pos);

@@ -49,27 +49,27 @@ struct King : public Figures
   King (Position pos, const Figure_Color &color);
 };
 
-struct Queen : Figures
+struct Queen : public Figures
 {
   Queen (Position pos, const Figure_Color &color);
 };
 
-struct Pawn : Figures
+struct Pawn : public Figures
 {
   Pawn (Position pos, const Figure_Color &color);
 };
 
-struct Rook : Figures
+struct Rook : public Figures
 {
   Rook (Position pos, const Figure_Color &color);
 };
 
-struct Horse : Figures
+struct Horse : public Figures
 {
   Horse (Position pos, const Figure_Color &color);
 };
 
-struct Elephant : Figures
+struct Elephant : public Figures
 {
   Elephant (Position pos, const Figure_Color &color);
 };
